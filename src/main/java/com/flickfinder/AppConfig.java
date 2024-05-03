@@ -57,9 +57,9 @@ public class AppConfig {
 		app.get("/movies/{id}", movieController::getMovieById);
 		app.get("/movies/{id}/stars", movieController::getPeopleByMovieId);
 
-		//app.get("/people", personController::getAllPeople);
-		// app.get("/people/{id}", personController::getPersonById);
-		// app.get("/people/{id}/movies", personController::getMoviesStarringPerson);
+		app.get("/people", personController::getAllPeople);
+		app.get("/people/{id}", personController::getPersonById);
+		app.get("/people/{id}/movies", personController::getMoviesStarringPerson);
 
 		return app;
 
