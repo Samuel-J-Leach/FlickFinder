@@ -42,12 +42,27 @@ public class MovieController {
 	 * 
 	 * @param ctx the Javalin context
 	 */
-	public void getAllMovies(Context ctx) {
+	/*public void getAllMovies(Context ctx) {
 		try {
 			ctx.json(movieDAO.getAllMovies());
 		} catch (SQLException e) {
 			ctx.status(500);
 			ctx.result("Database error");
+			e.printStackTrace();
+		}
+	}*/
+	public void getAllMovies(Context ctx) {
+		int limit;
+		try {
+			limit = Integer.parseInt(ctx.queryParam("limit"));
+		} catch (Exception e) {
+			limit = 50;
+		}
+		try {
+			ctx.json(movieDAO.getAllMovies(limit));
+		} catch (SQLException e) {
+			ctx.status(500);
+			ctx.result("database error");
 			e.printStackTrace();
 		}
 	}

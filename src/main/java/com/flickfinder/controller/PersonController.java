@@ -21,9 +21,25 @@ public class PersonController {
 		this.personDAO = personDAO;
 	}
 	
-	public void getAllPeople(Context ctx) {
+	/*public void getAllPeople(Context ctx) {
 		try {
 			ctx.json(personDAO.getAllPeople());
+		} catch (SQLException e) {
+			ctx.status(500);
+			ctx.result("database error");
+			e.printStackTrace();
+		}
+	}*/
+	
+	public void getAllPeople(Context ctx) {
+		int limit;
+		try {
+			limit = Integer.parseInt(ctx.queryParam("limit"));
+		} catch (Exception e) {
+			limit = 50;
+		}
+		try {
+			ctx.json(personDAO.getAllPeople(limit));
 		} catch (SQLException e) {
 			ctx.status(500);
 			ctx.result("database error");

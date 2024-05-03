@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +31,22 @@ public class PersonDAO {
 		connection = database.getConnection();
 	}
 	
-	public List<Person> getAllPeople() throws SQLException {
+	/*public List<Person> getAllPeople() throws SQLException {
 		List<Person> people = new ArrayList<>();
 		Statement statement = connection.createStatement();
 		ResultSet rs = statement.executeQuery("select * from people LIMIT 50");
+		while (rs.next()) {
+			people.add(new Person(rs.getInt("id"), rs.getString("name"), rs.getInt("birth")));
+		}
+		return people;
+	}*/
+	
+	public List<Person> getAllPeople(int limit) throws SQLException {
+		List<Person> people = new ArrayList<>();
+		String statement = "select * from people LIMIT ?";
+		PreparedStatement ps = connection.prepareStatement(statement);
+		ps.setInt(1, limit);
+		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			people.add(new Person(rs.getInt("id"), rs.getString("name"), rs.getInt("birth")));
 		}

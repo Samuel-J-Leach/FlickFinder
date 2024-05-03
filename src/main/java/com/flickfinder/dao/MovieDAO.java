@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class MovieDAO {
 	 * @throws SQLException if a database error occurs
 	 */
 
-	public List<Movie> getAllMovies() throws SQLException {
+	/*public List<Movie> getAllMovies() throws SQLException {
 		List<Movie> movies = new ArrayList<>();
 
 		Statement statement = connection.createStatement();
@@ -54,6 +53,18 @@ public class MovieDAO {
 			movies.add(new Movie(rs.getInt("id"), rs.getString("title"), rs.getInt("year")));
 		}
 
+		return movies;
+	}*/
+	
+	public List<Movie> getAllMovies(int limit) throws SQLException {
+		List<Movie> movies = new ArrayList<>();
+		String statement = "select * from movies LIMIT ?";
+		PreparedStatement ps = connection.prepareStatement(statement);
+		ps.setInt(1, limit);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			movies.add(new Movie(rs.getInt("id"), rs.getString("title"), rs.getInt("year")));
+		}
 		return movies;
 	}
 
