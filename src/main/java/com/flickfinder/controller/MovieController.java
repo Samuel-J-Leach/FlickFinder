@@ -1,10 +1,8 @@
 package com.flickfinder.controller;
 
 import java.sql.SQLException;
-
 import com.flickfinder.dao.MovieDAO;
 import com.flickfinder.model.Movie;
-
 import io.javalin.http.Context;
 
 /**
@@ -73,6 +71,17 @@ public class MovieController {
 		} catch (SQLException e) {
 			ctx.status(500);
 			ctx.result("Database error");
+			e.printStackTrace();
+		}
+	}
+	
+	public void getPeopleByMovieId(Context ctx) {
+		int id = Integer.parseInt(ctx.pathParam("id"));
+		try {
+			ctx.json(movieDAO.getPeopleByMovieId(id));
+		} catch(SQLException e) {
+			ctx.status(500);
+			ctx.result("database error");
 			e.printStackTrace();
 		}
 	}
