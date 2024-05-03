@@ -100,5 +100,28 @@ public class MovieController {
 			e.printStackTrace();
 		}
 	}
+	
+	public void getRatingsByYear(Context ctx) {
+		int year = Integer.parseInt(ctx.pathParam("year"));
+		int limit;
+		int votes;
+		try {
+			limit = Integer.parseInt(ctx.queryParam("limit"));
+		} catch (Exception e) {
+			limit = 50;
+		}
+		try{
+			votes = Integer.parseInt(ctx.queryParam("votes"));
+		} catch (Exception e) {
+			votes = 1000;
+		}
+		try {
+			ctx.json(movieDAO.getRatingsByYear(year, limit, votes));
+		} catch(SQLException e) {
+			ctx.status(500);
+			ctx.result("database error");
+			e.printStackTrace();
+		}
+	}
 
 }
