@@ -1,8 +1,10 @@
 package com.flickfinder.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.flickfinder.dao.PersonDAO;
+import com.flickfinder.model.Movie;
 import com.flickfinder.model.Person;
 
 import io.javalin.http.Context;
@@ -67,7 +69,13 @@ public class PersonController {
 	public void getMoviesStarringPerson(Context ctx) {
 		int id = Integer.parseInt(ctx.pathParam("id"));
 		try {
-			ctx.json(personDAO.getMoviesStarringPerson(id));
+			List<Movie> movies = personDAO.getMoviesStarringPerson(id);
+			if (movies == null) {
+				ctx.status(404);
+				ctx.result("movies not found");
+				return;
+			}
+			ctx.json(movies);
 		} catch(SQLException e) {
 			ctx.status(500);
 			ctx.result("database error");

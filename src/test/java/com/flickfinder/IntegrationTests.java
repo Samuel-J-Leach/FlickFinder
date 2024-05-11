@@ -33,7 +33,7 @@ class IntegrationTests {
 	 * The port number. Try and use a different port number from your main
 	 * application.
 	 */
-	int port = 6000;
+	int port = 8000;
 
 	/**
 	 * The base URL for our test application.
@@ -78,6 +78,21 @@ class IntegrationTests {
 				.body("title", equalTo("The Shawshank Redemption"))
 				.body("year", equalTo(1994));
 	}
+	
+	@Test
+	void retrieves_a_list_of_people_starring_in_a_movie() {}
+	
+	@Test
+	void retrieves_a_list_of_movies_and_their_ratings_for_a_given_year() {}
+	
+	@Test
+	void retrieves_a_list_of_all_people() {}
+	
+	@Test
+	void retrieves_a_single_person_by_id() {}
+	
+	@Test
+	void retrieves_a_list_of_movies_starring_a_person() {}
 
 	/**
 	 * Tears down the application after each test.

@@ -58,6 +58,7 @@ public class MovieDAO {
 	}*/
 	
 	public List<Movie> getAllMovies(int limit) throws SQLException {
+		if (limit < 0) limit = 0;
 		List<Movie> movies = new ArrayList<>();
 		String statement = "select * from movies LIMIT ?";
 		PreparedStatement ps = connection.prepareStatement(statement);
@@ -107,6 +108,7 @@ public class MovieDAO {
 	}
 	
 	public List<MovieRating> getRatingsByYear(int year, int limit, int votes) throws SQLException {
+		if (limit < 0) limit = 0;
 		List<MovieRating> movieRatings = new ArrayList<>();
 		String statement = "select * from movies inner join ratings on movies.id = ratings.movie_id where movies.year = ? and ratings.votes > ? order by ratings.rating desc LIMIT ?";
 		PreparedStatement ps = connection.prepareStatement(statement);

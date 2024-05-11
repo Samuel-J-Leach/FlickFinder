@@ -56,7 +56,7 @@ class MovieControllerTest {
 	void testGetAllMovies() {
 		movieController.getAllMovies(ctx);
 		try {
-			verify(movieDAO).getAllMovies();
+			verify(movieDAO).getAllMovies(50);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -70,7 +70,7 @@ class MovieControllerTest {
 	 */
 	@Test
 	void testThrows500ExceptionWhenGetAllDatabaseError() throws SQLException {
-		when(movieDAO.getAllMovies()).thenThrow(new SQLException());
+		when(movieDAO.getAllMovies(50)).thenThrow(new SQLException());
 		movieController.getAllMovies(ctx);
 		verify(ctx).status(500);
 	}
@@ -118,6 +118,60 @@ class MovieControllerTest {
 		when(ctx.pathParam("id")).thenReturn("1");
 		when(movieDAO.getMovieById(1)).thenReturn(null);
 		movieController.getMovieById(ctx);
+		verify(ctx).status(404);
+	}
+	
+	@Test
+	void testGetPeopleByMovieId() {
+		when(ctx.pathParam("id")).thenReturn("1");
+		movieController.getPeopleByMovieId(ctx);
+		try {
+			verify(movieDAO).getPeopleByMovieId(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	void testThrows500ExceptionWhenGetPeopleByMovieIdDatabaseError() throws SQLException {
+		when(ctx.pathParam("id")).thenReturn("1");
+		when(movieDAO.getPeopleByMovieId(1)).thenThrow(new SQLException());
+		movieController.getPeopleByMovieId(ctx);
+		verify(ctx).status(500);
+	}
+
+	@Test
+	void testThrows404ExceptionWhenNoPeopleFoundByMovieId() throws SQLException {
+		when(ctx.pathParam("id")).thenReturn("1");
+		when(movieDAO.getPeopleByMovieId(1)).thenReturn(null);
+		movieController.getPeopleByMovieId(ctx);
+		verify(ctx).status(404);
+	}
+
+	@Test
+	void testGetRatingsByYear() {
+		when(ctx.pathParam("year")).thenReturn("1999");
+		movieController.getRatingsByYear(ctx);
+		try {
+			verify(movieDAO).getRatingsByYear(1999, 50, 1000);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	void testThrows500ExceptionWhenGetRatingsByYearDatabaseError() throws SQLException {
+		when(ctx.pathParam("year")).thenReturn("1999");
+		when(movieDAO.getRatingsByYear(1999, 50, 1000)).thenThrow(new SQLException());
+		movieController.getRatingsByYear(ctx);
+		verify(ctx).status(500);
+	}
+
+	@Test
+	void testThrows404ExceptionWhenNoRatingsFoundByYear() throws SQLException {
+		when(ctx.pathParam("year")).thenReturn("2050");
+		when(movieDAO.getRatingsByYear(2050, 50, 1000)).thenReturn(null);
+		movieController.getRatingsByYear(ctx);
 		verify(ctx).status(404);
 	}
 

@@ -42,6 +42,7 @@ public class PersonDAO {
 	}*/
 	
 	public List<Person> getAllPeople(int limit) throws SQLException {
+		if (limit < 0) limit = 0;
 		List<Person> people = new ArrayList<>();
 		String statement = "select * from people LIMIT ?";
 		PreparedStatement ps = connection.prepareStatement(statement);

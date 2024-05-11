@@ -1,8 +1,13 @@
 package com.flickfinder.controller;
 
 import java.sql.SQLException;
+import java.util.List;
+
 import com.flickfinder.dao.MovieDAO;
 import com.flickfinder.model.Movie;
+import com.flickfinder.model.MovieRating;
+import com.flickfinder.model.Person;
+
 import io.javalin.http.Context;
 
 /**
@@ -82,7 +87,7 @@ public class MovieController {
 				ctx.result("Movie not found");
 				return;
 			}
-			ctx.json(movieDAO.getMovieById(id));
+			ctx.json(movie);
 		} catch (SQLException e) {
 			ctx.status(500);
 			ctx.result("Database error");
@@ -93,7 +98,13 @@ public class MovieController {
 	public void getPeopleByMovieId(Context ctx) {
 		int id = Integer.parseInt(ctx.pathParam("id"));
 		try {
-			ctx.json(movieDAO.getPeopleByMovieId(id));
+			List<Person> people = movieDAO.getPeopleByMovieId(id);
+			if (people == null) {
+				ctx.status(404);
+				ctx.result("people not found");
+				return;
+			}
+			ctx.json(people);
 		} catch(SQLException e) {
 			ctx.status(500);
 			ctx.result("database error");
@@ -116,7 +127,13 @@ public class MovieController {
 			votes = 1000;
 		}
 		try {
-			ctx.json(movieDAO.getRatingsByYear(year, limit, votes));
+			List<MovieRating> movieRatings = movieDAO.getRatingsByYear(year, limit, votes);
+			if (movieRatings == null) {
+				ctx.status(404);
+				ctx.result("ratings not found");
+				return;
+			}
+			ctx.json(movieRatings);
 		} catch(SQLException e) {
 			ctx.status(500);
 			ctx.result("database error");

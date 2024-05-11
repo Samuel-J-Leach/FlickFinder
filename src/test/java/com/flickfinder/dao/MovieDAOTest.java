@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.flickfinder.model.Movie;
+import com.flickfinder.model.MovieRating;
+import com.flickfinder.model.Person;
 import com.flickfinder.util.Database;
 import com.flickfinder.util.Seeder;
 
@@ -55,11 +57,34 @@ class MovieDAOTest {
 	 * We have seeded the database with 5 movies, so we expect to get 5 movies back.
 	 * At this point, we avoid checking the actual content of the list.
 	 */
-	@Test
+	/*@Test
 	void testGetAllMovies() {
 		try {
 			List<Movie> movies = movieDAO.getAllMovies();
 			assertEquals(5, movies.size());
+		} catch (SQLException e) {
+			fail("SQLException thrown");
+			e.printStackTrace();
+		}
+	}*/
+	@Test
+	void testGetAllMovies() {
+		try {
+			List<Movie> movies = movieDAO.getAllMovies(50);
+			assertEquals(5, movies.size());
+			movies = movieDAO.getAllMovies(3);
+			assertEquals(3, movies.size());
+		} catch (SQLException e) {
+			fail("SQLException thrown");
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	void testInvalidGetAllMovies() {
+		try {
+			List<Movie> movies = movieDAO.getAllMovies(-5);
+			assertEquals(0, movies.size());
 		} catch (SQLException e) {
 			fail("SQLException thrown");
 			e.printStackTrace();
@@ -88,7 +113,6 @@ class MovieDAOTest {
 	@Test
 	void testGetMovieByIdInvalidId() {
 		// write an assertThrows for a SQLException
-
 		try {
 			Movie movie = movieDAO.getMovieById(1000);
 			assertEquals(null, movie);
@@ -97,6 +121,56 @@ class MovieDAOTest {
 			e.printStackTrace();
 		}
 
+	}
+	
+	@Test
+	void testGetPeopleByMovieId() {
+		try {
+			List<Person> people = movieDAO.getPeopleByMovieId(1);
+			assertEquals(2, people.size());
+		} catch (SQLException e) {
+			fail("SQLException thrown");
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	void testGetPeopleByInvalidMovieId() {
+		try {
+			List<Person> people = movieDAO.getPeopleByMovieId(9999);
+			assertEquals(0, people.size());
+		} catch(SQLException e) {
+			fail("SQLException thrown");
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	void testGetRatingsByYear() {
+		try {
+			List<MovieRating> movieRatings = movieDAO.getRatingsByYear(1972, 50, 1000);
+			assertEquals(1, movieRatings.size());
+			movieRatings = movieDAO.getRatingsByYear(1972, 1, 1000);
+			assertEquals(1, movieRatings.size());
+			movieRatings = movieDAO.getRatingsByYear(1972, 50, 1400000);
+			assertEquals(1, movieRatings.size());
+		} catch (SQLException e) {
+			fail("SQLException thrown");
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	void testInvalidGetRatingsByYear() {
+		try {
+			List<MovieRating> movieRatings = movieDAO.getRatingsByYear(100000000, 50, 1000);
+			assertEquals(0, movieRatings.size());
+			movieRatings = movieDAO.getRatingsByYear(1972, -5, 1000);
+			assertEquals(0, movieRatings.size());
+		} catch (SQLException e) {
+			fail("SQLException thrown");
+			e.printStackTrace();
+		}
 	}
 
 	@AfterEach
