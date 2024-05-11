@@ -5,11 +5,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.flickfinder.dao.MovieDAO;
+import com.flickfinder.model.Movie;
+import com.flickfinder.model.MovieRating;
+import com.flickfinder.model.Person;
 
 import io.javalin.http.Context;
 
@@ -73,6 +77,14 @@ class MovieControllerTest {
 		when(movieDAO.getAllMovies(50)).thenThrow(new SQLException());
 		movieController.getAllMovies(ctx);
 		verify(ctx).status(500);
+	}
+	
+	@Test
+	void testThrows404ExceptionWhenGetAllMoviesReturnsNoFilms() throws SQLException {
+		when(ctx.queryParam("limit")).thenReturn("-1");
+		when(movieDAO.getAllMovies(-1)).thenReturn(new ArrayList<Movie>());
+		movieController.getAllMovies(ctx);
+		verify(ctx).status(404);
 	}
 
 	/**
@@ -143,7 +155,7 @@ class MovieControllerTest {
 	@Test
 	void testThrows404ExceptionWhenNoPeopleFoundByMovieId() throws SQLException {
 		when(ctx.pathParam("id")).thenReturn("1");
-		when(movieDAO.getPeopleByMovieId(1)).thenReturn(null);
+		when(movieDAO.getPeopleByMovieId(1)).thenReturn(new ArrayList<Person>());
 		movieController.getPeopleByMovieId(ctx);
 		verify(ctx).status(404);
 	}
@@ -170,7 +182,25 @@ class MovieControllerTest {
 	@Test
 	void testThrows404ExceptionWhenNoRatingsFoundByYear() throws SQLException {
 		when(ctx.pathParam("year")).thenReturn("2050");
-		when(movieDAO.getRatingsByYear(2050, 50, 1000)).thenReturn(null);
+		when(movieDAO.getRatingsByYear(2050, 50, 1000)).thenReturn(new ArrayList<MovieRating>());
+		movieController.getRatingsByYear(ctx);
+		verify(ctx).status(404);
+	}
+	
+	@Test
+	void testThrows404ExceptionWhenGetRatingsByYearWithInvalidLimit() throws SQLException {
+		when(ctx.pathParam("year")).thenReturn("1999");
+		when(ctx.queryParam("limit")).thenReturn("-1");
+		when(movieDAO.getRatingsByYear(1999, -1, 1000)).thenReturn(new ArrayList<MovieRating>());
+		movieController.getRatingsByYear(ctx);
+		verify(ctx).status(404);
+	}
+	
+	@Test
+	void testThrows404ExceptionWhenGetRatingsByYearWithVotesRequirementTooHigh() throws SQLException {
+		when(ctx.pathParam("year")).thenReturn("1999");
+		when(ctx.queryParam("votes")).thenReturn("999999999");
+		when(movieDAO.getRatingsByYear(1999, 50, 999999999)).thenReturn(new ArrayList<MovieRating>());
 		movieController.getRatingsByYear(ctx);
 		verify(ctx).status(404);
 	}

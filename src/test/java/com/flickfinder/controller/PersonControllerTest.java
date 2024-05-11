@@ -5,9 +5,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.flickfinder.dao.PersonDAO;
+import com.flickfinder.model.Movie;
+import com.flickfinder.model.Person;
 
 
 class PersonControllerTest {
@@ -37,6 +41,14 @@ class PersonControllerTest {
 		when(personDAO.getAllPeople(50)).thenThrow(new SQLException());
 		personController.getAllPeople(ctx);
 		verify(ctx).status(500);
+	}
+	
+	@Test
+	void testThrows404ExceptionWhenGetAllMoviesReturnsNoFilms() throws SQLException {
+		when(ctx.queryParam("limit")).thenReturn("-1");
+		when(personDAO.getAllPeople(-1)).thenReturn(new ArrayList<Person>());
+		personController.getAllPeople(ctx);
+		verify(ctx).status(404);
 	}
 	
 	@Test
@@ -88,7 +100,7 @@ class PersonControllerTest {
 	@Test
 	void testThrows404ExceptionWhenNoMoviesFoundByPersonId() throws SQLException {
 		when(ctx.pathParam("id")).thenReturn("1");
-		when(personDAO.getMoviesStarringPerson(1)).thenReturn(null);
+		when(personDAO.getMoviesStarringPerson(1)).thenReturn(new ArrayList<Movie>());
 		personController.getMoviesStarringPerson(ctx);
 		verify(ctx).status(404);
 	}

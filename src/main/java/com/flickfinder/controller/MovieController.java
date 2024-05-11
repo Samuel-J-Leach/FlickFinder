@@ -64,7 +64,13 @@ public class MovieController {
 			limit = 50;
 		}
 		try {
-			ctx.json(movieDAO.getAllMovies(limit));
+			List<Movie> movies = movieDAO.getAllMovies(limit);
+			if (movies.size() == 0) {
+				ctx.status(404);
+				ctx.result("movies not found");
+				return;
+			}
+			ctx.json(movies);
 		} catch (SQLException e) {
 			ctx.status(500);
 			ctx.result("database error");
@@ -99,7 +105,7 @@ public class MovieController {
 		int id = Integer.parseInt(ctx.pathParam("id"));
 		try {
 			List<Person> people = movieDAO.getPeopleByMovieId(id);
-			if (people == null) {
+			if (people.size() == 0) {
 				ctx.status(404);
 				ctx.result("people not found");
 				return;
@@ -128,7 +134,7 @@ public class MovieController {
 		}
 		try {
 			List<MovieRating> movieRatings = movieDAO.getRatingsByYear(year, limit, votes);
-			if (movieRatings == null) {
+			if (movieRatings.size() == 0) {
 				ctx.status(404);
 				ctx.result("ratings not found");
 				return;

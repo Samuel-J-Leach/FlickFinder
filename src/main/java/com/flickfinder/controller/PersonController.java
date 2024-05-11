@@ -41,7 +41,13 @@ public class PersonController {
 			limit = 50;
 		}
 		try {
-			ctx.json(personDAO.getAllPeople(limit));
+			List<Person> people = personDAO.getAllPeople(limit);
+			if (people.size() == 0) {
+				ctx.status(404);
+				ctx.result("people not found");
+				return;
+			}
+			ctx.json(people);
 		} catch (SQLException e) {
 			ctx.status(500);
 			ctx.result("database error");
@@ -70,7 +76,7 @@ public class PersonController {
 		int id = Integer.parseInt(ctx.pathParam("id"));
 		try {
 			List<Movie> movies = personDAO.getMoviesStarringPerson(id);
-			if (movies == null) {
+			if (movies.size() == 0) {
 				ctx.status(404);
 				ctx.result("movies not found");
 				return;
