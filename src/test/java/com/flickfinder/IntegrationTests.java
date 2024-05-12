@@ -67,7 +67,7 @@ class IntegrationTests {
 						"The Godfather: Part II", "The Dark Knight", "12 Angry Men"))
 				.body("year", hasItems(1994, 1972, 1974, 2008, 1957));
 		
-		//tests the limit parameter
+		//with the limit parameter
 		given().when().get(baseURL + "/movies?limit=2").then().assertThat().statusCode(200)
 			.body("id", hasItems(1, 2))
 			.body("title", hasItems("The Shawshank Redemption", "The Godfather"))
@@ -116,6 +116,30 @@ class IntegrationTests {
 			.body("year", hasItems(1994))
 			.body("rating", hasItems((float) 9.3))
 			.body("votes", hasItems(2200000));
+		
+		//with the limit parameter
+		given().when().get(baseURL + "/movies/ratings/1994?limit=2").then().assertThat().statusCode(200)
+			.body("id", hasItems(1))
+			.body("title", hasItems("The Shawshank Redemption"))
+			.body("year", hasItems(1994))
+			.body("rating", hasItems((float) 9.3))
+			.body("votes", hasItems(2200000));
+		
+		//with the votes parameter
+		given().when().get(baseURL + "/movies/ratings/1994?votes=2000000").then().assertThat().statusCode(200)
+			.body("id", hasItems(1))
+			.body("title", hasItems("The Shawshank Redemption"))
+			.body("year", hasItems(1994))
+			.body("rating", hasItems((float) 9.3))
+			.body("votes", hasItems(2200000));
+		
+		//with both the votes and limit parameter
+		given().when().get(baseURL + "/movies/ratings/1994?limit=2&votes=2000000").then().assertThat().statusCode(200)
+			.body("id", hasItems(1))
+			.body("title", hasItems("The Shawshank Redemption"))
+			.body("year", hasItems(1994))
+			.body("rating", hasItems((float) 9.3))
+			.body("votes", hasItems(2200000));
 	}
 	
 	@Test
@@ -140,6 +164,12 @@ class IntegrationTests {
 			.body("name", hasItems("Tim Robbins", "Morgan Freeman",
 					"Christopher Nolan", "Al Pacino", "Henry Fonda"))
 			.body("birth", hasItems(1958, 1937, 1970, 1940, 1905));
+		
+		//with the limit parameter
+		given().when().get(baseURL + "/people?limit=2").then().assertThat().statusCode(200)
+		.body("id", hasItems(1, 2))
+		.body("name", hasItems("Tim Robbins", "Morgan Freeman"))
+		.body("birth", hasItems(1958, 1937));
 	}
 	
 	@Test
